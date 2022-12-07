@@ -1,0 +1,41 @@
+YouTube API Application deals with the following subjects.
+
+
+1. YouTube URL PROVIDE and GET Video Basic Informations
+    author             >
+    bypass_age_gate()
+    caption_tracks    
+    captions          > 
+    channel_id        > 
+    channel_url       > 
+    check_availability >
+    description       >
+    fmt_streams  
+    keywords         > 
+    length           >
+    metadata  
+    publish_date  > 
+    rating       >
+    streaming_data   > 
+    streams
+    thumbnail_url  > 
+    title        >
+    vid_info  ??note: It is a complete log for the video information we can use a separte call to provide this information
+    views        >
+
+2. Streams
+    Varios options are aviable here to deal with the YouTube Streams
+
+3. Playlists
+    Deal with the YouTube Playlists
+
+4. Channel 
+    Deal With the YouTube Channels
+
+5. Search 
+    Deals with The YouTube Search Bar
+
+6. General
+    Captions: to deal with the Captions 
+    Users: Deal with YouTube Users 
+    Authors: Dealing with the Authors
