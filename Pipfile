@@ -9,6 +9,7 @@ djangorestframework = "*"
 pytube = "*"
 gunicorn = "*"
 inflect = "*"
+whitenoise = "*"
 
 [dev-packages]
 
