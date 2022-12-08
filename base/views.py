@@ -21,7 +21,8 @@ def home(request):
     context = {
         "Home": "Welcome to the YOUTUBE API - APP",
         "URLs": {
-            "GET Video Info": "/api/get_video_info/j6PbonHsqW0/"
+            "GET Video Info": "/api/get_video_info/j6PbonHsqW0/",
+            "GET Full Details":  "/api/get_full_video_details/j6PbonHsqW0/"
         }
     }
     
@@ -62,5 +63,26 @@ def get_video_info(request, id):
         "Description": video.description,
 
     }
+    
+    return JsonResponse(context, safe=False)
+
+
+
+@api_view(['GET'])
+@permission_classes((permissions.AllowAny,))
+def get_full_video_details(request, id):
+    
+    
+    # Number Converter to Text
+    converter = inflect.engine()
+
+    # create a dynamic url
+    url = "https://www.youtube.com/watch?v={}".format(id)    
+    video = YouTube(url)
+    
+    context = {
+        "Details": video.vid_info,
+    }
+    
     
     return JsonResponse(context, safe=False)
