@@ -28,6 +28,26 @@ YouTube API Application deals with the following subjects.
 
 3. Playlists
     Deal with the YouTube Playlists
+    count
+    html  
+    index  
+    initial_data
+    last_updated>
+    length      >
+    owner       >
+    owner_id    >
+    owner_url   >
+    playlist_id >
+    playlist_url >
+    sidebar_info
+    title         >
+    trimmed
+    url_generator()
+    video_urls
+    videos
+    views     >
+    yt_api_key
+    yt_cfg
 
 4. Channel 
     Deal With the YouTube Channels

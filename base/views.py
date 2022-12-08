@@ -10,7 +10,9 @@ from rest_framework import permissions
 
 
 # Import Pytube
-from pytube import YouTube
+from pytube import  ( 
+                     YouTube,
+                     Playlist)
 
 
 
@@ -22,7 +24,10 @@ def home(request):
         "Home": "Welcome to the YOUTUBE API - APP",
         "URLs": {
             "GET Video Info": "/api/get_video_info/j6PbonHsqW0/",
-            "GET Full Details":  "/api/get_full_video_details/j6PbonHsqW0/"
+            "GET Full Details":  "/api/get_full_video_details/j6PbonHsqW0/",
+            'GET Playlist Details': '/api/get_playlist_details/PLZlA0Gpn_vH8DWL14Wud_m8NeNNbYKOkj/',
+            'GET Playlist Complete Details': '/api/get_playlist_full_details/PLZlA0Gpn_vH8DWL14Wud_m8NeNNbYKOkj/',
+            'GET Playlist HTML FILE': '/api/get_playlist_html_file/PLZlA0Gpn_vH8DWL14Wud_m8NeNNbYKOkj/',
         }
     }
     
@@ -86,3 +91,78 @@ def get_full_video_details(request, id):
     
     
     return JsonResponse(context, safe=False)
+
+
+
+
+@api_view(['GET'])
+@permission_classes((permissions.AllowAny,))
+def get_playlist_details(request, id):
+    
+    converter = inflect.engine()
+    
+    # Create a Dynamic URL 
+    url = "https://www.youtube.com/playlist?list={}".format(id)
+    playlist = Playlist(url)
+    
+    
+    context = {
+        'ID' : playlist.playlist_id,
+        'Playlist URL': playlist.playlist_url,
+        'Title':playlist.title ,
+        'Total Videos In The List': "{} videos.".format(playlist.length),
+        'Views':   "{} || {}" .format(playlist.views, converter.number_to_words(playlist.views)),  
+        'Playlist Owner' : playlist.owner,
+        'Owner ID' : playlist.owner_id,
+        'Owner URL' : playlist.owner_url,
+        'Last_updated': playlist.last_updated,
+        
+        
+    }
+    
+    return JsonResponse(context, safe=False)
+    
+    
+    
+    # Use intial data param in the playlist to retrive full details about the playlist
+    # use the html attribute on the playlist to retrive the html file of the list
+    
+
+
+
+@api_view(['GET'])
+@permission_classes((permissions.AllowAny,))
+def get_playlist_full_details(request, id):
+
+    
+    # Create a Dynamic URL 
+    url = "https://www.youtube.com/playlist?list={}".format(id)
+    playlist = Playlist(url)
+    
+    
+    context = {
+        'Full Details' : playlist.initial_data,
+        
+    }
+    
+    return JsonResponse(context, safe=False)
+
+
+
+
+@api_view(['GET'])
+@permission_classes((permissions.AllowAny,))
+def get_playlist_html_file(request, id):
+    
+    # Create a Dynamic URL 
+    url = "https://www.youtube.com/playlist?list={}".format(id)
+    playlist = Playlist(url)
+    
+    
+    context = {
+        'Full Details' : playlist.html,
+        
+    }
+    
+    return JsonResponse(context, safe=False)
+    
