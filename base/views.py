@@ -1,7 +1,14 @@
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.core.files import File
+from django.http import JsonResponse, HttpResponse, FileResponse
+
+
 import json
 import inflect
+
+
+from pathlib import Path
+import os
 
 
 from rest_framework.decorators import api_view,permission_classes
@@ -12,10 +19,13 @@ from rest_framework import permissions
 # Import Pytube
 from pytube import  ( 
                      YouTube,
-                     Playlist)
+                     Playlist,
+                     Channel, 
+                     Stream
+                     )
 
 
-
+# Home Page, Provide Useful Information and Routes about the YOUTUBE - API - APP.
 @api_view(['GET'])
 @permission_classes((permissions.AllowAny,))
 def home(request):
@@ -28,6 +38,7 @@ def home(request):
             'GET Playlist Details': '/api/get_playlist_details/PLZlA0Gpn_vH8DWL14Wud_m8NeNNbYKOkj/',
             'GET Playlist Complete Details': '/api/get_playlist_full_details/PLZlA0Gpn_vH8DWL14Wud_m8NeNNbYKOkj/',
             'GET Playlist HTML FILE': '/api/get_playlist_html_file/PLZlA0Gpn_vH8DWL14Wud_m8NeNNbYKOkj/',
+            'Download A Single Video': '/download/single_video/j6PbonHsqW0/'
         }
     }
     
@@ -37,7 +48,7 @@ def home(request):
 
 
 
-
+# Get basic details of a video
 @api_view(['GET'])
 @permission_classes((permissions.AllowAny,))
 def get_video_info(request, id):
@@ -73,6 +84,8 @@ def get_video_info(request, id):
 
 
 
+
+# GET FULL Details of a video
 @api_view(['GET'])
 @permission_classes((permissions.AllowAny,))
 def get_full_video_details(request, id):
@@ -94,7 +107,7 @@ def get_full_video_details(request, id):
 
 
 
-
+# GET Basic Details of Playlist
 @api_view(['GET'])
 @permission_classes((permissions.AllowAny,))
 def get_playlist_details(request, id):
@@ -124,12 +137,9 @@ def get_playlist_details(request, id):
     
     
     
-    # Use intial data param in the playlist to retrive full details about the playlist
-    # use the html attribute on the playlist to retrive the html file of the list
-    
 
 
-
+# GET FUll Details of playlist
 @api_view(['GET'])
 @permission_classes((permissions.AllowAny,))
 def get_playlist_full_details(request, id):
@@ -150,6 +160,7 @@ def get_playlist_full_details(request, id):
 
 
 
+# Get Full HTML FILE of playlist
 @api_view(['GET'])
 @permission_classes((permissions.AllowAny,))
 def get_playlist_html_file(request, id):
@@ -160,9 +171,58 @@ def get_playlist_html_file(request, id):
     
     
     context = {
-        'Full Details' : playlist.html,
+        'HTML FILE' : playlist.html,
         
     }
     
     return JsonResponse(context, safe=False)
     
+    
+
+
+
+# Download a single youtube video
+@api_view(['GET'])
+@permission_classes((permissions.AllowAny,))
+def download_single_video(request, id):
+    
+    
+    # create a dynamic url
+    url = "https://www.youtube.com/watch?v={}".format(id)    
+    video = YouTube(url)
+    
+    
+    video_title = video.title
+
+    
+    streams = video.streams.filter(only_video=True)
+    
+ 
+    # for item in streams:
+    #     video_full_name = "{}.{}".format(video_title, item.mime_type[6:])
+    #     print(video_full_name)
+    
+    
+    
+    # Caution! this method only grap the video in the streams query
+    video_ful_name = "{}.{}".format(video_title, streams.first().mime_type[6:])
+    
+    
+    # Caution! this method only grap the video in the streams query
+    downloaded_video = streams.first().download()
+    
+   
+    
+    
+    new_path = "./{}".format(video_ful_name)
+
+    downloaded_video = File(
+            file=open(new_path, 'rb'),
+            name=Path(new_path))
+  
+        
+    downloaded_video.name = Path(new_path).name
+    downloaded_video.size = os.path.getsize(new_path)
+    return FileResponse(downloaded_video, as_attachment=True)
+  
+

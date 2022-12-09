@@ -6,7 +6,8 @@ from .views import (
                     get_full_video_details,
                     get_playlist_details,
                     get_playlist_full_details,
-                    get_playlist_html_file
+                    get_playlist_html_file, 
+                    download_single_video
                     )
 
 
@@ -19,5 +20,6 @@ urlpatterns = [
     path('api/get_full_video_details/<str:id>/', get_full_video_details, name='get_full_video_details'),
     path('api/get_playlist_details/<str:id>/', get_playlist_details, name='get_playlist_details'),
     path('api/get_playlist_full_details/<str:id>/', get_playlist_full_details, name="get_playlist_full_details"),
-    path('api/get_playlist_html_file/<str:id>/', get_playlist_html_file, name="get_playlist_html_file")
+    path('api/get_playlist_html_file/<str:id>/', get_playlist_html_file, name="get_playlist_html_file"), 
+    path('download/single_video/<str:id>/', download_single_video, name="download_single_video")
 ]
