@@ -6,6 +6,8 @@ from django.http import JsonResponse, HttpResponse, FileResponse
 import json
 import inflect
 
+import mimetypes
+
 
 from pathlib import Path
 import os
@@ -33,12 +35,13 @@ def home(request):
     context = {
         "Home": "Welcome to the YOUTUBE API - APP",
         "URLs": {
-            "GET Video Info": "/api/get_video_info/j6PbonHsqW0/",
-            "GET Full Details":  "/api/get_full_video_details/j6PbonHsqW0/",
+            "GET Video Basic Information": "/api/get_video_info/j6PbonHsqW0/",
+            "GET Video Full Details":  "/api/get_full_video_details/j6PbonHsqW0/",
+            "GET Video Keywords": '/api/get_video_kewords/j6PbonHsqW0/',
             'GET Playlist Details': '/api/get_playlist_details/PLZlA0Gpn_vH8DWL14Wud_m8NeNNbYKOkj/',
             'GET Playlist Complete Details': '/api/get_playlist_full_details/PLZlA0Gpn_vH8DWL14Wud_m8NeNNbYKOkj/',
             'GET Playlist HTML FILE': '/api/get_playlist_html_file/PLZlA0Gpn_vH8DWL14Wud_m8NeNNbYKOkj/',
-            'Download A Single Video': '/download/single_video/j6PbonHsqW0/'
+            'Download A Single Video': '/download/single_video/DKrQq7GSPkM/'
         }
     }
     
@@ -197,7 +200,6 @@ def download_single_video(request, id):
     
     streams = video.streams.filter(only_video=True)
     
- 
     # for item in streams:
     #     video_full_name = "{}.{}".format(video_title, item.mime_type[6:])
     #     print(video_full_name)
@@ -206,23 +208,54 @@ def download_single_video(request, id):
     
     # Caution! this method only grap the video in the streams query
     video_ful_name = "{}.{}".format(video_title, streams.first().mime_type[6:])
-    
+   
     
     # Caution! this method only grap the video in the streams query
     downloaded_video = streams.first().download()
     
    
-    
-    
     new_path = "./{}".format(video_ful_name)
 
     downloaded_video = File(
             file=open(new_path, 'rb'),
             name=Path(new_path))
   
+    
+    
+    
+
+    
+    mime_type, _ = mimetypes.guess_type(new_path)
+    
+    response = HttpResponse(downloaded_video, content_type=mime_type)
+    
+    response['Content-Disposition'] = "attachment; filename={}".format(downloaded_video.name)
+    
+    return response
+    
+    
         
     downloaded_video.name = Path(new_path).name
     downloaded_video.size = os.path.getsize(new_path)
     return FileResponse(downloaded_video, as_attachment=True)
+  
+
+
+
+
+# Download a single youtube video
+@api_view(['GET'])
+@permission_classes((permissions.AllowAny,))
+def get_video_kewords(request, id):
+    
+    
+     # create a dynamic url
+    url = "https://www.youtube.com/watch?v={}".format(id)    
+    video = YouTube(url)
+
+
+
+    
+    return JsonResponse(video.keywords, safe=False)
   
 
