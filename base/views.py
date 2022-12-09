@@ -222,16 +222,16 @@ def download_single_video(request, id):
   
     
     
-    
+
 
     
     mime_type, _ = mimetypes.guess_type(new_path)
     
     response = HttpResponse(downloaded_video, content_type=mime_type)
-    
-    response['Content-Disposition'] = "attachment; filename={}".format(downloaded_video.name)
-    
+
+    response['Content-Disposition'] = "filename={}".format(downloaded_video.name)
     return response
+    
     
     
         
